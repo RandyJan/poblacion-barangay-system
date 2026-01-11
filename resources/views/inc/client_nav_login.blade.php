@@ -1,6 +1,25 @@
-<header class="header-blue" style="padding-bottom: 0px;">
-    <nav class="navbar navbar-dark navbar-expand-md navigation-clean-search">
-        <div class="container-fluid"><a class="navbar-brand" href="#" style="font-size: 45px;font-family: bodoni mt;"><img src="{{ URL::to($image->url ?? 'Logo not set') }}" style="resize: both;width: 100px;margin-right: 30px;"><p class="navbar-brand" id="client_header_login" style="font-size: 45px;">{{ $image->barangay_name ?? 'Logo not set' }}</p></a>
-        </div>
+<header class="header-blue py-2" style="background-color: #1E3A8A;"> <!-- Modern blue header -->
+    <nav class="navbar navbar-expand-md navbar-dark container-fluid">
+        <a class="navbar-brand d-flex align-items-center" href="#">
+            <!-- Logo -->
+            <img src="
+{{  Storage::url($image->image ?? 'Logo not set')  }}" alt="Barangay Logo"
+                style="width: 80px; height: auto; margin-right: 20px; border-radius: 8px; box-shadow: 0 2px 6px rgba(0,0,0,0.3);">
+
+            <!-- Barangay Name -->
+            <span id="client_header_login"
+                style="font-size: 1.8rem; font-weight: 600; font-family: 'Roboto', sans-serif; color: #F3F4F6;">
+                {{ $image->barangay_name ?? 'No logo found' }}
+            </span>
+        </a>
+
+        <!-- Optional: Add a navbar toggler for mobile -->
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarContent"
+            aria-controls="navbarContent" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+
+
     </nav>
+
 </header>

@@ -13,7 +13,7 @@
 
   <title>Login</title>
 </head>
-<body style="background-image: url({{ URL::asset('images/background.png') }}); background-repeat:no-repeat; background-size: cover ">
+<body style="">
   <h1 class="text-white m-4">Admin Login</h1>
 <div class="container">
   <div class="row">

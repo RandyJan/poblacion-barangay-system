@@ -14,7 +14,7 @@
            <img style="width: 120px" id="logo1create1" class="logo1create1" src="http://{{  request()->getHost()}}{{  Storage::url($layout->logo_1 ?? 'Logo not set')  }}">
         </div>
         <div class="column-center text-center" >
-           <p id="heading2" style='font-size:19px;font-family: "Times New Roman, Times, serif";'> REPUBLIC OF THE PHILIPPINES<br>
+           <p id="heading2" style='font-size:19px;font-family: "Times New Roman, Times, serif";'> REPUBLIC wOF THE PHILIPPINES<br>
               {{ $layout->municipality ?? 'Municipality not set'  }}<br>
               {{ $layout->province ?? 'Province not set'  }}<br>
               <b ><u>   {{ $layout->barangay ?? 'Barangay not set'  }}</u></b>

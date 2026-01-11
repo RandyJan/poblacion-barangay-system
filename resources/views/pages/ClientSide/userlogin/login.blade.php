@@ -17,12 +17,12 @@
   <script type="text/javascript" src="https://code.jquery.com/jquery-3.5.1.js"></script>
 
   <script>
-    
+
   </script>
 
   <title>Login</title>
 </head>
-<body style="background-image: url({{ URL::asset('images/background.png') }}); background-repeat:no-repeat; background-size: cover ">
+<body style="">
 
 @include('inc.client_nav_login')
 
@@ -38,7 +38,7 @@
           @endif
           <h5 class="card-title text-center">Log In</h5>
           {{-- form --}}
-          <form class="log-in-form" action="/barangay/login" method="post"> 
+          <form class="log-in-form" action="/barangay/login" method="post">
             @csrf
             <div class="form-label-group mt-2">
               <label for="client_login_email">Email address</label>

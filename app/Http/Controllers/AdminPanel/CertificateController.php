@@ -12,6 +12,7 @@ use App\Models\Certificate_list;
 use App\Models\brgy_official;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\Facades\Log;
 class CertificateController extends Controller
 {
 
@@ -20,7 +21,7 @@ class CertificateController extends Controller
         if (!session()->has("user")) {
             return redirect("login");
         }
-        
+
         $brgy_official = brgy_official::where('position','!=','Punong Barangay')
         ->get();
         $puno = brgy_official::where('position','=','Punong Barangay')
@@ -107,43 +108,62 @@ class CertificateController extends Controller
     }
 
 
-    public function store(Request $request)
-    {
+public function store(Request $request)
+{
+    Log::info("test");
 
-
-        $request->validate([
-            'province' => 'Required',
-            'municipality' => 'Required',
-            'office' => 'Required',
-            'barangay' => 'Required',
-            'punongbarangay' => 'required|image|mimes:jpg,png,jpeg,gif,svg|max:500||dimensions:max_width=500,max_height=500',
-            'logo1' => 'required|image|mimes:jpg,png,jpeg,gif,svg|max:500||dimensions:max_width=500,max_height=500',
-            'logo2' => 'required|image|mimes:jpg,png,jpeg,gif,svg|max:500||dimensions:max_width=500,max_height=500',
-
-        ]);
-
-        $deletefile = DB::table('certificate_layouts')
-        ->where('layout_id','=',$request->certificate_id)
+    // Delete previous files if exist
+    $deletefile = DB::table('certificate_layouts')
+        ->where('layout_id', $request->certificate_id)
         ->first();
-        if ($deletefile !== null) {
-            $deletefile = DB::table('certificate_layouts')
-        ->where('layout_id','=',$request->certificate_id)
-        ->first();
-        Storage::delete($deletefile->logo_1);
-        Storage::delete($deletefile->logo_2);
-        Storage::delete($deletefile->punongbarangay);
-         }
 
-        $path1 = $request->file('logo1')->store('public/images');
-        $path2 = $request->file('logo2')->store('public/images');
-        $path3 = $request->file('punongbarangay')->store('public/images');
-        Certificate_layout::updateOrCreate(['layout_id' => $request->certificate_id],
-        ['logo_1' => $path1,'logo_2' => $path2 ,'punongbarangay' => $path3,'province'=>$request->province,'municipality'=>$request->municipality,'barangay'=>$request->barangay,'office'=>$request->office]);
-
-
-
-        return response()->json(['Success'=>'Data saved successfully']);
+    if ($deletefile !== null) {
+        @unlink(public_path('images/' . $deletefile->logo_1));
+        @unlink(public_path('images/' . $deletefile->logo_2));
+        @unlink(public_path('images/' . $deletefile->punongbarangay));
     }
+
+    // Store files using original names
+    $file1 = $request->file('logo1');
+    $file2 = $request->file('logo2');
+    $file3 = $request->file('punongbarangay');
+
+    $filename1 = $file1->getClientOriginalName();
+    $filename2 = $file2->getClientOriginalName();
+    $filename3 = $file3->getClientOriginalName();
+
+    $path1 = 'public/images/' . $filename1;
+    $path2 = 'public/images/' . $filename2;
+    $path3 = 'public/images/' . $filename3;
+
+    // Move files to public/images
+    $file1->move(public_path('images'), $filename1);
+    $file2->move(public_path('images'), $filename2);
+    $file3->move(public_path('images'), $filename3);
+
+    // Save paths in DB
+    Certificate_layout::updateOrCreate(
+        ['layout_id' => $request->certificate_id],
+        [
+            'logo_1' => $path1,
+            'logo_2' => $path2,
+            'punongbarangay' => $path3,
+            'province' => $request->province,
+            'municipality' => $request->municipality,
+            'barangay' => $request->barangay,
+            'office' => $request->office
+        ]
+    );
+
+    return response()->json([
+        'Success' => true,
+        'logo_1' => $path1,
+        'logo_2' => $path2,
+        'punongbarangay' => $path3
+    ]);
+}
+
+
 
 
     public function edit($request_id){
@@ -172,6 +192,7 @@ class CertificateController extends Controller
 
     public function certtypesubmit(Request $request)
     {
+        Log::info($request->all());
         $request->validate([
 
 

@@ -12,67 +12,45 @@ use Illuminate\Support\Facades\DB;
 class BarangayimageController extends Controller
 {
 
-    public function store(Request $request)
-    {
-        $request->validate([
-            'barangay_name' => 'Required',
-            'city' => 'Required',
-            'province' => 'Required',
-            'image' => 'required|image|mimes:jpg,png,jpeg,gif,svg|max:300||dimensions:max_width=300,max_height=300',
+   public function store(Request $request)
+{
+$request->validate([
+'barangay_name' => 'required',
+'city' => 'required',
+'province' => 'required',
+'image' => 'required|image|mimes:jpg,png,jpeg,gif,svg|max:300|dimensions:max_width=300,max_height=300',
+]);
 
-        ]);
+// Get the uploaded file
+$file = $request->file('image');
 
+// Define the path and retain the original filename
+$path = $file->storeAs('public/images', $file->getClientOriginalName());
 
+// Delete old file if exists
+$deletefile = DB::table('barangayimages')
+    ->where('barangay_id', $request->barangay_id)
+    ->first();
 
+if ($deletefile !== null) {
+    Storage::delete($deletefile->image);
+}
 
-
-
-     //   $path = $request->file('image')->store('public/images');
-
-     $path = $request->file('image')->store('public/images');
-
-
-/*
-         $image = Barangayimage::create([
-
-            'city' => $request->city,
-            'barangay_name' => $request->barangay_name,
-            'province'=>$request->province,
-            'image'=>basename($path),
-            'url' => Storage::disk('s3')->url($path)
-
-         ]);
-*/
-
-
-        $deletefile = DB::table('barangayimages')
-        ->where('barangay_id','=',$request->barangay_id)
-        ->first();
-        if ($deletefile !== null) {
-            $deletefile = DB::table('barangayimages')
-        ->where('barangay_id','=',$request->barangay_id)
-        ->first();
-
-       Storage::delete($deletefile->image);
-
-         }
-         /** @var \Illuminate\Filesystem\FilesystemManager $disk */
-
-
-
-        Barangayimage::updateOrCreate(['barangay_id' => $request->barangay_id],
-        ['city' => $request->city,
+// Save or update the record
+Barangayimage::updateOrCreate(
+    ['barangay_id' => $request->barangay_id],
+    [
+        'city' => $request->city,
         'barangay_name' => $request->barangay_name,
-        'province'=>$request->province,
-        'image'=>$path,
+        'province' => $request->province,
+        'image' => $path, // retains original filename
+    ]
+);
 
+return redirect('/setting/maintenance')
+                ->with('success', 'Post has been created successfully.');
 
-        ]);
-
-        return redirect('/setting/maintenance')
-                        ->with('success','Post has been created successfully.');
-    }
-
+}
 
 
 

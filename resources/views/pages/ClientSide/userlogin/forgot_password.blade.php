@@ -17,12 +17,12 @@
   <script type="text/javascript" src="https://code.jquery.com/jquery-3.5.1.js"></script>
 
   <script>
-    
+
   </script>
 
   <title>Forgot Password</title>
 </head>
-<body style="background-image: url({{ URL::asset('images/background.png') }}); background-repeat:no-repeat; background-size: cover ">
+<body style=" ">
 
 @include('inc.client_nav_login')
 

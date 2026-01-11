@@ -138,7 +138,7 @@
             <div class="col-sm-6 border solid overflow-auto">
                <div class="row">
                   <div class="column-right text-right" >
-                     <img style="width: 120px" id="logo1create" class="logo1create" src="{{  Storage::url($layout->logo_1 ?? 'Logo not set')  }}">
+                     <img style="width: 120px" id="logo1create" class="logo1create" src="{{   asset($layout->logo_1 ?? 'images/default_logo.png')  }}">
                   </div>
                   <div class="column-center text-center" >
                      <p id="heading"  style='font-size:19px;font-family: "Times New Roman, Times, serif";'> REPUBLIC OF THE PHILIPPINES<br>
@@ -152,11 +152,11 @@
                      </div>
                   </div>
                   <div class="column-left text-left" >
-                     <img style="width: 120px" id="logo2create" class="logo2create" src="{{  Storage::url($layout->logo_2 ?? 'Logo not set')  }}">
+                     <img style="width: 120px" id="logo2create" class="logo2create" src="{{   asset($layout->logo_2 ?? 'images/default_logo.png')  }}">
                   </div>
                </div>
                <div class="box">
-                  <img  id="logobackground1" class="background-opacity text-center" style="height: 450px;margin-left: 30%;margin-top: 40px" src="{{  Storage::url($layout->logo_2 ?? 'background photo no set')  }}">
+                  <img  id="logobackground1" class="background-opacity text-center" style="height: 450px;margin-left: 30%;margin-top: 40px" src="{{   asset($layout->logo_2 ?? 'images/default_logo.png')  }}">
                   <div class="row text">
                      <div class="column-body-left text-center " >
                         <img  id="punongbarangay1" style="width: 120px" src="{{  Storage::url($layout->punongbarangay ?? '2X2 PIC of punong barangay not set')  }}">

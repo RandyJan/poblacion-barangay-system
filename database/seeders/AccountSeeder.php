@@ -59,5 +59,14 @@ class AccountSeeder extends Seeder
             'password'=>Hash::make('encoder'),
             'type'=> "Encoder",
         ]);
+
+        DB::table('accounts')->insert([
+            'first_name'=>'Randy',
+            'last_name'=>'Rongcales',
+            'username'=>'RJ45',
+            'email'=>'rongcales14@gmail.com',
+            'password'=>Hash::make('12345678'),
+            'type'=> "Admin",
+        ]);
     }
 }
