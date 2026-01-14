@@ -27,8 +27,8 @@
                 <div class="carousel slide" data-ride="carousel" id="carousel-1" style="background-size: cover;">
                     <div class="carousel-inner">
                         <div class="carousel-item active"><img class="w-100 d-block" src="{{ URL::to('images/plmun.jpg') }}" alt="Slide Image"></div>
-                        <div class="carousel-item"><img class="w-100 d-block" src="{{ URL::to('images/plmun2.webp') }}" alt="Slide Image"></div>
-                        <div class="carousel-item"><img class="w-100 d-block" src="{{ URL::to('images/plmun3.jpg') }}" alt="Slide Image"></div>
+                        <div class="carousel-item"><img class="w-100 d-block" src="{{ URL::to('images/plmun2.jpg') }}" alt="Slide Image"></div>
+                        {{-- <div class="carousel-item"><img class="w-100 d-block" src="{{ URL::to('images/plmun1.jpg') }}" alt="Slide Image"></div> --}}
                     </div>
                     <div><a class="carousel-control-prev" href="#carousel-1" role="button" data-slide="prev"><span class="carousel-control-prev-icon"></span><span class="sr-only">Previous</span></a><a class="carousel-control-next" href="#carousel-1" role="button" data-slide="next"><span class="carousel-control-next-icon"></span><span class="sr-only">Next</span></a></div>
                     <ol class="carousel-indicators">
@@ -39,8 +39,8 @@
                 </div>
             </div>
             <div class="col-md-6">
-                <p><br>VISION<br>PLMun envisions itself as a dynamic and highly competitive Higher Education Institution (HEI) committed to people empowerment and the development of a humane society. The university aims to be a leader in providing quality education that meets the needs of both local and global communities.<br>
-                    <br>MISSION<br>PLMun is dedicated to ensuring that its educational programs not only equip students with knowledge and skills but also instill values that promote ethical and responsible citizenship. The university's commitment to continuous improvement and adherence to ethical standards further supports its mission to serve the community effectively.<br><br></p>
+                <p><br>VISION<br>A transparent, efficient, and responsive Barangay Poblacion that empowers its citizens through streamlined public services, fostering trust and community engagement.<br>
+                    <br>MISSION<br>To enhance the quality of public service delivery in Barangay Poblacion by reducing bureaucratic red tape, promoting transparency, and ensuring accountability. Committed to engaging with the community, simplifying processes, and continuously improving services to meet the needs of every resident.<br><br></p>
             </div>
         </div>
     </div>

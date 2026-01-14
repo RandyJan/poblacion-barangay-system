@@ -5819,7 +5819,10 @@ a.close.disabled {
 .carousel {
   position: relative;
 }
-
+.carousel-img {
+    height: 400px;          /* choose your desired height */
+    object-fit: cover;      /* crops image but keeps aspect ratio */
+}
 .carousel.pointer-event {
   touch-action: pan-y;
 }
