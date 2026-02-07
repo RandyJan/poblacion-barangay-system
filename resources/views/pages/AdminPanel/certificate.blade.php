@@ -361,23 +361,53 @@
          $('body').on('click', '.editrequest', function () {
              var request_id = $(this).data('id');
 
+$.get("{{ route('certificate.index') }}" + '/' + request_id + '/edit', function(data) {
 
-             $.get("{{ route('certificate.index') }}" +'/' + request_id +'/edit', function (data) {
+    // Show modal
+    $('#rqtmodal').modal('show');
+
+    // Fill text fields
+    $('#request_id_paid').val(data.request_id);
+    $('#namess').val(data.name);
+    $('#description').val(data.description);
+    $('#age').val(data.age);
+    $('#gender').val(data.gender);
+    $('#paid').val(data.paid);
+    $('#price').val(data.price);
+    $('#request_type').val(data.request_type);
+
+const requirementContainer = $('#requirementImages');
+
+// Clear previous images
+requirementContainer.empty();
+
+if (data.requirements && data.requirements.length > 0) {
+    data.requirements.forEach((req, index) => {
+        const filename = req.image_path.split('/').pop();
+
+        const card = $(`
+            <div class="col-6 col-sm-4 col-md-3 col-lg-2">
+                <div class="card image-card h-100 shadow-sm border-0 rounded cursor-pointer overflow-hidden" onclick="openImage(this)">
+                    <img src="/certificate/image/${filename}" class="card-img-top img-fluid requirement-img" alt="Requirement ${index + 1}">
+                    <div class="card-body p-2 text-center bg-light">
+                        <small class="text-muted">Document ${index + 1}</small>
+                    </div>
+                </div>
+            </div>
+        `);
+
+        requirementContainer.append(card);
+    });
+} else {
+    requirementContainer.append('<p class="text-muted">No uploaded requirements.</p>');
+}
 
 
-                 $('#rqtmodal').modal('show');
-                 $('#request_id_paid').val(data.request_id);
-                 $('#namess').val(data.name);
-                 $('#description').val(data.description);
-                 $('#age').val(data.age);
-                 $('#gender').val(data.gender);
-                 $('#paid').val(data.paid);
-                 $('#price').val(data.price);
-                 $('#request_type').val(data.request_type);
 
-
-             })
           });
+          });
+
+
            //certtype submit
            $('#paid').click(function (e) {
                e.preventDefault();
@@ -617,7 +647,67 @@
 
 
          }
+    function openImage(card) {
+    const img = $(card).find('img').attr('src');
+    $('#modalImage').attr('src', img);
+    $('#imageModal').modal('show'); // jQuery + Bootstrap 4 method
+}
          //print
+function viewRequest(id) {
+    console.log('viewRequest called with ID:', id);
+
+    $.get('/certificate/' + id, function (data) {
+
+        console.log('Full response data:', data);
+
+        const $requirements = $('#requirementImages');
+
+        if ($requirements.length === 0) {
+            console.error('Element #requirementImages does not exist in DOM');
+            return;
+        }
+
+        // Fill normal fields
+        $('#namess').val(data.name);
+        $('#description').val(data.description);
+        $('#request_type').val(data.request_type);
+        $('#age').val(data.age);
+        $('#gender').val(data.gender);
+        $('#price').val(data.price);
+        $('#paid').val(data.paid);
+
+        // Clear previous images
+        $requirements.html('');
+
+        // Debug
+        console.log('requirements:', data.requirements);
+
+        if (data.requirements && data.requirements.length > 0) {
+            data.requirements.forEach(function (req, index) {
+                console.log(`Requirement #${index}`, req);
+
+                $requirements.append(`
+                    <div class="mb-2">
+                        <img
+                            src="/${req.image_path}"
+                            class="img-thumbnail"
+                            style="width:150px; height:auto; cursor:pointer"
+                            onclick="window.open('/${req.image_path}', '_blank')"
+                        >
+                    </div>
+                `);
+            });
+        } else {
+            $requirements.html('<p class="text-muted">No uploaded requirements</p>');
+        }
+
+        $('#rqtmodal').modal('show');
+    })
+    .fail(function (xhr) {
+        console.error('AJAX failed:', xhr.responseText);
+    });
+}
+
 
       </script>
    </div>
@@ -644,6 +734,28 @@
                      <textarea readonly id="description" name="description" rows="5" style=" width:100%;"></textarea>
                   </div>
                </div>
+                <div class="form-group mb-3">
+    <label class="col-sm-12 col-form-label fw-bold">Uploaded Requirements</label>
+    <div class="col-sm-12">
+        <div id="requirementImages" class="row g-3">
+            <!-- Images will be injected here -->
+        </div>
+    </div>
+</div>
+
+<!-- Fullscreen Image Modal -->
+<div class="modal fade" id="imageModal" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered modal-lg">
+    <div class="modal-content border-0 bg-transparent">
+      <div class="modal-body p-0 text-center">
+        <button type="button" class="btn-close position-absolute top-0 end-0 m-3" data-bs-dismiss="modal" aria-label="Close"></button>
+        <img id="modalImage" src="" class="img-fluid rounded shadow" alt="Fullscreen Image">
+      </div>
+    </div>
+  </div>
+</div>
+
+</div>
                <div class="form-group">
                   <label for="name" class="col-sm-4 control-label">Requested Clearance</label>
                   <div class="col-sm-12">
@@ -682,6 +794,8 @@
                   <button type="button" id="approved" class="btn btn-primary">Approve</button>
                </div>
             </form>
+
+
          </div>
       </div>
    </div>

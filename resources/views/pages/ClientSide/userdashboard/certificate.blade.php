@@ -20,10 +20,10 @@
     <input type="hidden" id = "current_resident" data-id = {{ session("resident.id") }}>
 
     @include('inc.client_nav')
-    
+
     <section class="contact-clean" style="padding-bottom: 140px;">
            <!--FORM-->
-        <form action="/barangay/certificate" method="post">
+           <form action="/barangay/certificate" method="post" enctype="multipart/form-data">
             @csrf
             <input hidden  type="text" value="{{ session("resident.id") }}" id="resident_id" name="resident_id">
             <h2 class="text-center">Certificate Request Form</h2>
@@ -69,6 +69,23 @@
                     @endforeach
                     @endif
                 </select>
+                <label style="font-weight: bold;">Upload Pictures</label>
+<div class="form-group">
+    <input
+        type="file"
+        name="images[]"
+        class="form-control"
+        multiple
+        accept="image/*"
+        onchange="previewImages(this)"
+    >
+    @error('images')
+        <span class="text-danger error_text">{{ $message }}</span>
+    @enderror
+</div>
+
+<!-- Image Preview -->
+<div class="row" id="image-preview"></div>
 
             <div class="form-group"><button class="btn btn-primary" type="submit">send </button></div>
         </form>
@@ -101,13 +118,40 @@
                     </ul>
                 </div>
                 <div class="col-lg-3 item social"><a href="#"><i class="icon ion-social-facebook"></i></a><a href="#"><i class="icon ion-social-twitter"></i></a><a href="#"><i class="icon ion-social-snapchat"></i></a><a href="#"><i class="icon ion-social-instagram"></i></a>
-                    <p class="copyright">Company Name © 2017</p>
+                    <p class="copyright">Company Name © 2025</p>
                 </div>
             </div>
         </div>
     </footer>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.6.0/js/bootstrap.bundle.min.js"></script>
+    <script>
+function previewImages(input) {
+    const preview = document.getElementById('image-preview');
+    preview.innerHTML = '';
+
+    if (input.files) {
+        Array.from(input.files).forEach(file => {
+            const reader = new FileReader();
+
+            reader.onload = function (e) {
+                const col = document.createElement('div');
+                col.className = 'col-md-3 mb-3';
+
+                col.innerHTML = `
+                    <div class="card">
+                        <img src="${e.target.result}" class="card-img-top" style="height:150px; object-fit:cover;">
+                    </div>
+                `;
+                preview.appendChild(col);
+            };
+
+            reader.readAsDataURL(file);
+        });
+    }
+}
+</script>
+
 </body>
 
 </html>

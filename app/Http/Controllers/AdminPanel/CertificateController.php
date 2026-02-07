@@ -13,6 +13,8 @@ use App\Models\brgy_official;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\File;
+use Illuminate\Support\Facades\Response;
 class CertificateController extends Controller
 {
 
@@ -169,7 +171,12 @@ public function store(Request $request)
     public function edit($request_id){
 
         $cert = Certificate_request::find($request_id);
-        return response()->json($cert);
+        // dd($cert);
+        $request = Certificate_request::with('requirements')->find($request_id);
+
+    // dump($request);
+
+        return response()->json($request);
     }
 
     public function certificate_type(Request $request){
@@ -225,12 +232,36 @@ public function store(Request $request)
     public function certtypeedit($request_id){
 
         $cert = Certificate_list::find($request_id);
+        Log::info($cert);
         return response()->json($cert);
     }
     public function certtypedelete($request_id){
 
+
         $cert = Certificate_list::find($request_id)->delete();
         return response()->json(["success"=>"Data saved successfully"]);
+    }
+    public function show($id)
+{
+    $request = Certificate_request::with('requirements')->findOrFail($id);
+
+    return response()->json($request);
+}
+  public function getImage($filename)
+    {
+        $path = public_path('uploads/certificates/' . $filename);
+
+        if (!File::exists($path)) {
+            abort(404, 'File not found');
+        }
+
+        $file = File::get($path);
+        $type = File::mimeType($path);
+
+        return Response::make($file, 200, [
+            'Content-Type' => $type,
+            'Content-Disposition' => 'inline; filename="' . $filename . '"'
+        ]);
     }
 }
 

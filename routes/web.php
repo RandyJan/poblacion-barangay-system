@@ -84,6 +84,7 @@ Route::resource('settled', SettledCasesController::class);
 
 Route::resource('certificate', CertificateController::class);
 Route::get('certificate/table/paid', [CertificateController::class, 'certrequestpaid'])->name('certrequestpaid.index');
+Route::get('certificate/{id}', [CertificateController::class, 'show']);
 Route::get('certificate/table/unpaid', [CertificateController::class, 'index'])->name('certrequestunpaid.index');
 
 Route::post('certificate/table/paid', [CertificateController::class, 'storerequest'])->name('storerequest.post');
@@ -126,6 +127,7 @@ Route::post("/setting/account/form",[AccountController::class, 'accountSettingCh
     Route::post("/login", [UserController::class, 'check']);
     Route::get("/logout", [UserController::class, 'logout']);
 
+
 //Admin Panel End
 
 
@@ -134,7 +136,8 @@ Route::post("/setting/account/form",[AccountController::class, 'accountSettingCh
 //Certificate page
 Route::get("/barangay/certificate/", [ClearanceController::class, 'index'])->name("certificateclient.index");
 Route::post("/barangay/certificate/", [ClearanceController::class, 'store'])->name("certificateclient.store");
-
+Route::get('/certificate/image/{filename}', [CertificateController::class, 'getImage'])
+     ->name('certificate.image');
 //Schedule page
 Route::get('/barangay/schedule/', [ScheduleClientController::class, 'index'])->name("scheduleclientindex.get");
 Route::get('/barangay/schedule/{schedule}', [ScheduleClientController::class, 'show'])->name("scheduleclientshow.get");
