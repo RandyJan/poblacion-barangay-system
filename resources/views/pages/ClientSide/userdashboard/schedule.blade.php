@@ -17,7 +17,7 @@
    </head>
    <body style="margin: 0 0 100px;">
       <input type="hidden" id = "current_resident" data-id = {{ session("resident.id") }}>
-      
+
       @include('inc.client_nav')
 
       <div style="margin: 30px;margin-bottom: 80px;">
@@ -34,83 +34,98 @@
                   <h1 >Certificate</h1>
                   <br>
                </div>
-               <div class="container">
-                  <div class="row">
-                     @if(count($request_list))
-                     @foreach ($request_list as $request_list)
-                     <div class="col-md-4">
-                        <div class="card mb-4 box-shadow">
-                           <div class="bg-info text-white text-center pt-2" stlye="height: 100px">
-                              <h4>{{ $request_list->request_type }}</h4>
-                           </div>
-                           <div class="card-body">
-                              <div class="card-text border-bottom solid">
-                                 <div class="row text-center">
-                                    <div class="col-sm-6">
-                                       <h5>Price</h5>
-                                       <h5>{{ $request_list->price }}</h5>
-                                    </div>
-                                    <div class="col-sm-6">
-                                       <h5>Paid</h5>
-                                       <h5>{{ $request_list->paid }}</h5>
-                                    </div>
-                                 </div>
-                              </div>
-                              <div class="d-flex justify-content-between align-items-center">
-                                 <small class="pl-2"> {{ Carbon\Carbon::parse($request_list->created_at)->toDateString() }}</small>
-                                 <hr>
-                                 <div class="btn-group">
-                                    <a href="schedule/{{ $request_list->request_id }}" class="btn btn-sm btn-outline-secondary">View</a>
-                                    <form method="get" id="print_form" action="/barangay/schedule/print/{{ $request_list->request_id }}">
-                                       @csrf
-                                       <input hidden name="print_id" value="{{ $request_list->request_id }}">
-                                       <button data-id="{{ $request_list->request_id }}"  id="{{ $request_list->request_id }}" type="button" form="print_form" class="btn btn-sm print-button btn-outline-secondary">Print</button>
-                                    </form>
-                                 </div>
-                              </div>
-                           </div>
+              <div class="container">
+    <div class="row">
+
+        @if(count($request_list))
+        @foreach ($request_list as $request)
+
+            @php
+                switch(strtolower($request->status)) {
+                    case 'approved':
+                        $statusClass = 'success';
+                        break;
+                    case 'completed':
+                        $statusClass = 'primary';
+                        break;
+                    case 'rejected':
+                        $statusClass = 'danger';
+                        break;
+                    default:
+                        $statusClass = 'warning'; // pending
+                }
+            @endphp
+
+            <div class="col-md-4">
+                <div class="card mb-4 box-shadow">
+
+                    <!-- HEADER -->
+                    <div class="bg-info text-white text-center pt-2 position-relative"
+                         style="height: 100px">
+
+                        <span class="badge badge-{{ $statusClass }} position-absolute"
+                              style="top:10px; right:10px;">
+                            {{ ucfirst($request->status) }}
+                        </span>
+
+                        <h4 class="mt-4">{{ $request->request_type }}</h4>
+                    </div>
+
+                    <!-- BODY -->
+                    <div class="card-body">
+                        <div class="card-text border-bottom solid">
+                            <div class="row text-center">
+                                <div class="col-sm-6">
+                                    <h5>Price</h5>
+                                    <h5>{{ $request->price }}</h5>
+                                </div>
+                                <div class="col-sm-6">
+                                    <h5>Paid</h5>
+                                    <h5>{{ $request->paid }}</h5>
+                                </div>
+                            </div>
                         </div>
-                     </div>
-                     @endforeach
-                     @endif
-                  </div>
-                  <script>
-                     $(function () {
-                      $('.print-button').on('click', function (e) {
-                          var data = ( $(this).data('id'));
-                          e.preventDefault();
-                          $.ajax({
-                              type: 'GET',
-                              data: $(this).serialize(),
-                              url: "/barangay/schedule/print/"+data,
-                              xhrFields: {
-                                  responseType: 'blob'
-                              },
-                              success: function(response){
-                                  var blob = new Blob([response]);
-                                  var link = document.createElement('a');
-                                  link.href = window.URL.createObjectURL(blob);
-                                  link.download = "certificate.pdf";
-                                  link.click();
-                              },
-                                  error: function(blob){
-                                      console.log(blob);
-                                  }
-                              });
-                     });
-                     $.ajaxSetup({
-                     headers: {
-                      'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-                     }
-                     });
-                     });
-                     function downloadFile(response) {
-                     var blob = new Blob([response], {type: 'application/pdf'})
-                     var url = URL.createObjectURL(blob);
-                     location.assign(url);
-                     }
-                  </script>
-               </div>
+
+                        <div class="d-flex justify-content-between align-items-center mt-2">
+                            <small>{{ \Carbon\Carbon::parse($request->created_at)->toDateString() }}</small>
+
+                            <div class="btn-group">
+                                <a href="schedule/{{ $request->request_id }}"
+                                   class="btn btn-sm btn-outline-secondary">
+                                    View
+                                </a>
+
+                                <button
+                                    data-id="{{ $request->request_id }}"
+                                    type="button"
+                                    class="btn btn-sm btn-outline-secondary print-button"
+                                    {{ !in_array(strtolower($request->status), ['approved','completed']) ? 'disabled' : '' }}
+                                >
+                                    Print
+                                </button>
+                            </div>
+                        </div>
+
+                        @if(!in_array(strtolower($request->status), ['approved','completed']))
+                            <small class="text-muted d-block mt-2">
+                                Printing available after approval
+                            </small>
+                        @endif
+                        @if(strtolower($request->status) === 'rejected' && !empty($request->remarks))
+    <div class="alert alert-danger mt-3 mb-0">
+        <strong>Reason for Rejection:</strong>
+        <p class="mb-0">{{ $request->remarks }}</p>
+    </div>
+@endif
+                    </div>
+                </div>
+            </div>
+
+        @endforeach
+        @endif
+
+    </div>
+</div>
             </div>
          </div>
       </div>

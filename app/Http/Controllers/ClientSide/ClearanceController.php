@@ -58,6 +58,7 @@ public function store(Request $request)
         'paid' => 'No',
         'price' => $certificate->price,
         'cert_id' => $certificate->certificate_list_id,
+        'status' => 'Pending',
     ]);
 
     // 3️⃣ Save uploaded requirements (SAME request_id for all)

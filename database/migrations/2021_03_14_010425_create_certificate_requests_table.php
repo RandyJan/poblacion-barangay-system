@@ -25,6 +25,8 @@ class CreateCertificateRequestsTable extends Migration
             $table->string('price')->nullable();
             $table->BigInteger('cert_id')->unsigned();
             $table->string('request_type')->nullable();
+            $table->string('status')->nullable();
+            $table->string('remarks')->nullable();
             $table->foreign('resident_id')
             ->references('resident_account_id')
             ->on('resident_accounts')

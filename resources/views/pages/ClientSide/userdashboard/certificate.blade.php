@@ -60,15 +60,23 @@
 
 
 
-            <select name="request_type" class="form-control">
+       <select name="request_type" id="request_type" class="form-control">
+    @if(count($certificate) > 0)
+        @foreach ($certificate as $certificate)
+            <option value="{{ $certificate->certificate_type }}">
+                {{ $certificate->certificate_type }}
+            </option>
+        @endforeach
+    @endif
+</select>
 
+                <label style="font-weight: bold;" class="mt-3">Requirements</label>
+<ul id="requirementsBox" class="list-group mb-3">
+    <li class="list-group-item text-muted">
+        Please select a certificate type to view requirements.
+    </li>
+</ul>
 
-                    @if(count($certificate ) > 0)
-                    @foreach ($certificate  as $certificate )
-                    <option value="{{  $certificate->certificate_type 	}}" >{{ $certificate->certificate_type 	 }}</option>
-                    @endforeach
-                    @endif
-                </select>
                 <label style="font-weight: bold;">Upload Pictures</label>
 <div class="form-group">
     <input
@@ -126,6 +134,62 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.6.0/js/bootstrap.bundle.min.js"></script>
     <script>
+        const REQUIREMENTS = {
+    "Barangay Clearance": [
+        "Valid Government-Issued ID (National ID / PhilSys, Driver's License, Passport, UMID / Voter's ID / PRC ID)",
+        "Proof of Residency",
+        "Cedula"
+    ],
+
+    "Indigency Certificate": [
+        "Valid Government-Issued ID",
+        "Proof of Residency",
+        "Proof of Declaration of Financial Status (Certificate of Unemployment, Medical Abstract / Hospital Bill, School Requirement Letter)"
+    ],
+
+    "Business Clearance": [
+        "Valid ID of Business Owner / Authorized Representative",
+        "Business Registration (DTI Certificate / SEC Registration)",
+        "Proof of Business Address (Lease Contract OR Land Title / Tax Declaration)",
+        "Cedula",
+        "Previous Barangay Clearance (if renewal)",
+        "Authorization Letter and ID of Representative (if applicable)"
+    ]
+};
+
+const requestTypeSelect = document.getElementById('request_type');
+const requirementsBox = document.getElementById('requirementsBox');
+
+function updateRequirements(type) {
+    requirementsBox.innerHTML = '';
+
+    if (!REQUIREMENTS[type]) {
+        requirementsBox.innerHTML = `
+            <li class="list-group-item text-muted">
+                No requirements available for this certificate.
+            </li>
+        `;
+        return;
+    }
+
+    REQUIREMENTS[type].forEach(req => {
+        const li = document.createElement('li');
+        li.className = 'list-group-item d-flex align-items-start';
+        li.innerHTML = `
+            <i class="fa fa-check-circle text-success mr-2 mt-1"></i>
+            <span>${req}</span>
+        `;
+        requirementsBox.appendChild(li);
+    });
+}
+
+// Trigger when selection changes
+requestTypeSelect.addEventListener('change', function () {
+    updateRequirements(this.value);
+});
+
+// Auto-load requirements for first option
+updateRequirements(requestTypeSelect.value);
 function previewImages(input) {
     const preview = document.getElementById('image-preview');
     preview.innerHTML = '';

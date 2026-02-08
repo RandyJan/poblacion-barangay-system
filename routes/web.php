@@ -86,7 +86,7 @@ Route::resource('certificate', CertificateController::class);
 Route::get('certificate/table/paid', [CertificateController::class, 'certrequestpaid'])->name('certrequestpaid.index');
 Route::get('certificate/{id}', [CertificateController::class, 'show']);
 Route::get('certificate/table/unpaid', [CertificateController::class, 'index'])->name('certrequestunpaid.index');
-
+Route::post('/barangay/certificate/update-status', [CertificateController::class, 'updateStatus']);
 Route::post('certificate/table/paid', [CertificateController::class, 'storerequest'])->name('storerequest.post');
 Route::delete('certificate/table/paid/{request_id}', [CertificateController::class, 'deleterequest'])->name('deleterequest.delete');
 Route::get('certificate/table/type', [CertificateController::class, 'certificate_type'])->name('certificate_type.index');

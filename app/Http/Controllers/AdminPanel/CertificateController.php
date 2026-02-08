@@ -263,5 +263,21 @@ public function store(Request $request)
             'Content-Disposition' => 'inline; filename="' . $filename . '"'
         ]);
     }
+    public function updateStatus(Request $request)
+{
+    $request->validate([
+        'request_id' => 'required',
+        'status' => 'required',
+        'remarks' => 'nullable|string'
+    ]);
+
+    Certificate_request::where('request_id', $request->request_id)->update([
+        'status' => $request->status,
+        'remarks' => $request->remarks
+    ]);
+
+    return response()->json(['success' => true]);
+}
+
 }
 

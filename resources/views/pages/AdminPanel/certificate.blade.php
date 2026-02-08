@@ -216,6 +216,64 @@
          </div>
       </div>
       <script>
+$(document).ready(function () {
+
+    function toggleRemarks() {
+        const status = $('#status').val();
+
+        if (status === 'rejected') {
+            $('#remarksGroup').stop(true, true).slideDown();
+            $('#remarks').attr('required', true);
+        } else {
+            $('#remarksGroup').stop(true, true).slideUp();
+            $('#remarks').removeAttr('required');
+        }
+    }
+
+    // Status dropdown change
+    $('#status').on('change', function () {
+        toggleRemarks();
+    });
+
+    // When modal is shown (important!)
+    $('#rqtmodal').on('shown.bs.modal', function () {
+        toggleRemarks();
+    });
+
+    // Update status + remarks
+    $('#updateStatus').on('click', function () {
+
+        const requestId = $('#request_id_paid').val();
+        const status = $('#status').val();
+        const remarks = $('#remarks').val().trim();
+
+        if (status === 'rejected' && remarks === '') {
+            alert('Please provide remarks for rejection.');
+            return;
+        }
+
+        $.ajax({
+            url: '/barangay/certificate/update-status',
+            type: 'POST',
+            data: {
+                _token: '{{ csrf_token() }}',
+                request_id: requestId,
+                status: status,
+                remarks: remarks
+            },
+            success: function () {
+                alert('Request updated successfully');
+                $('#rqtmodal').modal('hide');
+                location.reload();
+            },
+            error: function () {
+                alert('Something went wrong. Please try again.');
+            }
+        });
+    });
+
+});
+
          $(function () {
          $.ajaxSetup({
            headers: {
@@ -375,6 +433,8 @@ $.get("{{ route('certificate.index') }}" + '/' + request_id + '/edit', function(
     $('#paid').val(data.paid);
     $('#price').val(data.price);
     $('#request_type').val(data.request_type);
+ $('#status').val(data.status.toLowerCase());
+  $('#remarks').val(data.remarks ?? '');
 
 const requirementContainer = $('#requirementImages');
 
@@ -789,10 +849,39 @@ function viewRequest(id) {
                      <input readonly type="number" class="form-control" id="price" name="price" placeholder="Price" value="" maxlength="50" required="">
                   </div>
                </div>
-               <div class="modal-footer">
-                  <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                  <button type="button" id="approved" class="btn btn-primary">Approve</button>
-               </div>
+               <div class="form-group">
+    <label class="col-sm-4 control-label">Status</label>
+    <div class="col-sm-12">
+        <select name="status" id="status" class="form-control">
+            <option value="pending">Pending</option>
+            <option value="approved">Approved</option>
+            <option value="completed">Completed</option>
+            <option value="rejected">Rejected</option>
+        </select>
+    </div>
+</div>
+<div class="form-group" id="remarksGroup" style="display:none;">
+    <label class="col-sm-4 control-label">Remarks:</label>
+    <div class="col-sm-12">
+        <textarea
+            name="remarks"
+            id="remarks"
+            rows="4"
+            class="form-control"
+            placeholder="Enter reason if request is rejected"></textarea>
+    </div>
+</div>
+
+             <div class="modal-footer">
+    <button type="button" class="btn btn-secondary" data-dismiss="modal">
+        Close
+    </button>
+
+    <button type="button" id="updateStatus" class="btn btn-success">
+        Update Status
+    </button>
+</div>
+
             </form>
 
 
